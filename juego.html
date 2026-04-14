@@ -133,6 +133,7 @@
 
     <script>
         let kisses = 0;
+        let kissclick = 1;
         let power = 1;
         let autoKissActive = false;
         let fallingPicturesStarted = false;
@@ -142,7 +143,7 @@
         const priceMultiplier = 1.5;
 
         function addKiss() {
-            kisses += power;
+            kisses = kissclick * power;
             updateDisplay();
         }
 
@@ -176,7 +177,7 @@
                     setInterval(createFallingPicture, 2000);
                     autoCost = Math.floor(autoCost * priceMultiplier);
                     document.getElementsByClassName('upgrade-btn1')[0].textContent = 'Pintar Cuadros (' + (autoCost) + ' besos)';
-                    setInterval(() => kisses++, 1000);
+                    setInterval(() => kisses, 1000);
                     setInterval(() => {
                         addKiss();
                     }, 1000);
