@@ -190,6 +190,7 @@
                     power = 2;
                     doubleCost = Math.floor(doubleCost * priceMultiplier);
                     document.getElementsByClassName('upgrade-btn2')[0].textContent = 'Doble Poder (' + (doubleCost) + ' besos)';
+                    document.getElementsByClassName('upgrade-btn2')[0].visibility = 'hidden';
                 } else if (type === 'triple') {
                     power = 3;
                     tripleCost = Math.floor(tripleCost * priceMultiplier);
