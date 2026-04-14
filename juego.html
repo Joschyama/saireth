@@ -141,9 +141,11 @@
         let doubleCost = 50;
         let tripleCost = 150;
         const priceMultiplier = 1.5;
+        let autoKissInterval = null;
+        let fallingPicturesInterval = null;
 
         function addKiss() {
-            kisses = kissclick * power;
+            kisses += kissclick * power;
             updateDisplay();
         }
 
@@ -151,36 +153,39 @@
             if (kisses >= cost) {
                 kisses -= cost;
                 if (type === 'auto') {
-                    //für jedes upgrade fallen mehrere bilder von diesem von oben runter
-                    autoKissActive = true;
-                    //TODO: AUTO SCALING OF PRICES
-                    // Animation: Bilder fallen von oben
-                    function createFallingPicture() {
-                        const img = document.createElement('img');
-                        img.src = 'WhatsApp Image 2026-04-14 at 21.02.05.jpeg';
-                        img.style.position = 'fixed';
-                        img.style.width = '50px';
-                        img.style.left = Math.random() * (window.innerWidth - 50) + 'px';
-                        img.style.top = '-60px';
-                        img.style.zIndex = '-1';
-                        img.style.animation = 'fall 5s linear forwards';
-                        document.body.appendChild(img);
+                    if (!autoKissActive) {
+                        autoKissActive = true;
                         
-                        setTimeout(() => img.remove(), 5000);
+                        // Animation: Bilder fallen von oben
+                        function createFallingPicture() {
+                            const img = document.createElement('img');
+                            img.src = 'WhatsApp Image 2026-04-14 at 21.02.05.jpeg';
+                            img.style.position = 'fixed';
+                            img.style.width = '50px';
+                            img.style.left = Math.random() * (window.innerWidth - 50) + 'px';
+                            img.style.top = '-60px';
+                            img.style.zIndex = '-1';
+                            img.style.animation = 'fall 5s linear forwards';
+                            document.body.appendChild(img);
+                            
+                            setTimeout(() => img.remove(), 5000);
+                        }
+                        
+                        // Füge CSS Animation hinzu
+                        const style = document.createElement('style');
+                        style.textContent = '@keyframes fall { to { top: 100vh; } }';
+                        document.head.appendChild(style);
+                        
+                        // Erstelle alle 2 Sekunden ein neues Bild
+                        fallingPicturesInterval = setInterval(createFallingPicture, 2000);
+                        
+                        // Auto kiss every 1 second
+                        autoKissInterval = setInterval(() => {
+                            addKiss();
+                        }, 1000);
                     }
-                    
-                    // Füge CSS Animation hinzu
-                    const style = document.createElement('style');
-                    style.textContent = '@keyframes fall { to { top: 100vh; } }';
-                    document.head.appendChild(style);
-                    // Erstelle alle 2 Sekunden ein neues Bild
-                    setInterval(createFallingPicture, 2000);
                     autoCost = Math.floor(autoCost * priceMultiplier);
                     document.getElementsByClassName('upgrade-btn1')[0].textContent = 'Pintar Cuadros (' + (autoCost) + ' besos)';
-                    setInterval(() => kisses, 1000);
-                    setInterval(() => {
-                        addKiss();
-                    }, 1000);
                 } else if (type === 'double') {
                     power = 2;
                     doubleCost = Math.floor(doubleCost * priceMultiplier);
@@ -189,43 +194,17 @@
                     power = 3;
                     tripleCost = Math.floor(tripleCost * priceMultiplier);
                     document.getElementsByClassName('upgrade-btn3')[0].textContent = 'Triple Poder (' + (tripleCost) + ' besos)';
-                    //TODO: Implement the code for the triple power upgrade
-                    // This upgrade should add an additional animation to the background
-                    // The animation should be a scaling animation that runs every 2 seconds
+                    
+                    // Implement the code for the triple power upgrade
                     setInterval(() => {
                         document.body.style.transform = 'scale(1.05)';
-                        setTimeout(() => document.body.style.transform = '', 2000);
+                        setTimeout(() => document.body.style.transform = '', 200);
                     }, 2000);
                 }
                 updateDisplay();
             }
-            displayUpgrades();
-            
         }
-        
 
-        function displayUpgrades() {
-            const upgradesElement = document.querySelector('.upgrades');
-            // Remove existing list if present
-            const existingList = upgradesElement.querySelector('.upgrades-list');
-            if (existingList) {
-                existingList.remove();
-            }
-            
-            const upgradesListElement = document.createElement('ul');
-            upgradesListElement.className = 'upgrades-list';
-
-            if (autoKissActive) {
-                triplePowerElement.textContent = 'Triple Power';
-                upgradesListElement.appendChild(triplePowerElement);
-            }
-
-            upgradesElement.appendChild(upgradesListElement);
-            // Only append if there are any upgrades
-            if (upgradesListElement.children.length > 0) {
-                upgradesElement.appendChild(upgradesListElement);
-            }
-        }
         function updateDisplay() {
             document.getElementById('kisses').textContent = kisses;
         }
